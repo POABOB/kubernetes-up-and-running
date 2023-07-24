@@ -1,12 +1,16 @@
+# 版本
 apiVersion: v1
+# 類型
 kind: Pod
+# 紀錄物件的相關資訊，e.g. name, namespace, labels, annotations...
 metadata:
   name: kuard
+# 將會被存放至 etcd，k8s 將會透過此來建立/更新物件
 spec:
   containers:
-  - image: gcr.io/kuar-demo/kuard-amd64:1
-    name: kuard
+  - image: gcr.io/kuar-demo/kuard-amd64:1       # 映像檔
+    name: kuard                                 # 容器名稱
     ports:
-    - containerPort: 8080
-      name: http
-      protocol: TCP
+    - containerPort: 8080                       # 容器內使用的 port
+      name: http                                # 描述端口名稱
+      protocol: TCP                             # 使用連線方式 TCP UDP

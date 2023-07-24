@@ -1,38 +1,48 @@
+# 版本
 apiVersion: v1
+# 類型
 kind: Pod
+# 紀錄物件的相關資訊，e.g. name, namespace, labels, annotations...
 metadata:
   name: kuard
+# 將會被存放至 etcd，k8s 將會透過此來建立/更新物件
 spec:
+  # 磁碟區(資料卷)，存放資料的位置
   volumes:
     - name: "kuard-data"
+      # NFS 伺服器進行掛載儲存
       nfs:
         server: my.nfs.server.local
         path: "/exports"
   containers:
-    - image: gcr.io/kuar-demo/kuard-amd64:1
-      name: kuard
+    - image: gcr.io/kuar-demo/kuard-amd64:1       # 映像檔
+      name: kuard                                 # 容器名稱
       ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
+      - containerPort: 8080                       # 容器內使用的 port
+        name: http                                # 描述端口名稱
+        protocol: TCP                             # 使用連線方式 TCP UDP
+      # 資源限制
       resources:
-        requests:
-          cpu: "500m"
-          memory: "128Mi"
-        limits:
+        requests:                                 # 最低請求資源
+          cpu: "500m"                             # m = milicores, 1 CPU = 1000m
+          memory: "128Mi"                         # 1 MiB = 1000 KiB, 1 MB = 1024KB
+        limits:                                   # 最高請求資源
           cpu: "1000m"
           memory: "256Mi"
+      # 磁碟區容器掛載的資訊
       volumeMounts:
-        - mountPath: "/data"
-          name: "kuard-data"
+        - mountPath: "/data"                      # 磁碟區位置
+          name: "kuard-data"                      # 磁碟區名稱
+      # 檢查容器應用程式有無正常
       livenessProbe:
-        httpGet:
-          path: /healthy
-          port: 8080
-        initialDelaySeconds: 5
-        timeoutSeconds: 1
-        periodSeconds: 10
-        failureThreshold: 3
+        httpGet:                                  # 使用 HTTP GET
+          path: /healthy                          # 健檢的路由
+          port: 8080                              # PORT
+        initialDelaySeconds: 5                    # 容器開啟延遲 n 秒後開始
+        timeoutSeconds: 1                         # 請求超時為 n 秒
+        periodSeconds: 10                         # 每 n 秒進行健檢
+        failureThreshold: 3                       # 連續 n 次失敗重啟容器
+      # 檢查容器是否可以接受請求
       readinessProbe:
         httpGet:
           path: /ready
