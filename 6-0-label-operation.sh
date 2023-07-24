@@ -25,4 +25,4 @@ kubectl get deployments --selector="app=bandicoot,ver!=1"
 kubectl get deployments --selector="!app"
 
 # 刪除全部 deployment
-kubectl delete deployments -all
+kubectl delete deployments --all
